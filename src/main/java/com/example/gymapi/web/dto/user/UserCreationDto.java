@@ -8,17 +8,17 @@ import lombok.Data;
 @Data
 public class UserCreationDto {
 
-    @NotBlank
+    @NotBlank(message = "Specify firstName")
     @NotNull
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 50, message = "Too short")
     @Pattern(regexp = "^[a-zA-Z\\s]*$")
-    private String name;
+    private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Specify lastName")
     @NotNull
     @Size(min = 2, max = 50)
     @Pattern(regexp = "^[a-zA-Z\\s-]*$")
-    private String surname;
+    private String lastName;
 
     @NotBlank(message = "Specify email")
     @Email(message = "Invalid email")

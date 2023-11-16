@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final JwtService jwtService;
     @Override
+    @Transactional
     public User createUser(User user) {
         if (userRepository.existsByPhoneNumber(user.getPhoneNumber())) {
             throw new UserAlreadyExistException("User with phone number %s already exist".formatted(user.getPhoneNumber()));
@@ -39,9 +40,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<DecodedJWT> signIn(String login, String password) {
-        var user = userRepository.findByEmail(login)
-                .orElseThrow(() -> new UserNotFoundException("User with login %s doesn't exist".formatted(login)));
+    @Transactional
+    public Optional<DecodedJWT> signIn(String email, String password) {
+        var user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with login %s doesn't exist".formatted(email)));
         if (!passwordEncoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Invalid password");
         return jwtService.verifyAccessToken(jwtService.createJwtToken(user));
     }

@@ -10,12 +10,12 @@ public class UserUpdateDto {
     @NotNull
     @Size(min = 2, max = 50)
     @Pattern(regexp = "^[a-zA-Z\\s]*$")
-    private String name;
+    private String firstName;
 
     @NotNull
     @Size(min = 2, max = 50)
     @Pattern(regexp = "^[a-zA-Z\\s-]*$")
-    private String surname;
+    private String lastName;
 
     @Email(message = "Invalid email")
     private String email;
