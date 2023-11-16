@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public Optional<DecodedJWT> signIn(String email, String password) {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with login %s doesn't exist".formatted(email)));
+                .orElseThrow(() -> new UserNotFoundException("User with this email doesn't exist"));
         if (!passwordEncoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Invalid password");
         return jwtService.verifyAccessToken(jwtService.createJwtToken(user));
     }
