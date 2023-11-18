@@ -41,7 +41,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<UserSubscription> userSubscriptions = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -50,6 +50,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Training> records = new LinkedHashSet<>();
 
+
+    public void addSubscription(UserSubscription userSubscription){
+        userSubscriptions.add(userSubscription);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

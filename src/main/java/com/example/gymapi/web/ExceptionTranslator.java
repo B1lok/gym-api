@@ -2,9 +2,7 @@ package com.example.gymapi.web;
 
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.example.gymapi.exception.InvalidPasswordException;
-import com.example.gymapi.exception.UserAlreadyExistException;
-import com.example.gymapi.exception.UserNotFoundException;
+import com.example.gymapi.exception.*;
 import com.example.gymapi.web.dto.ExceptionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,19 +19,19 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionTranslator {
 
-    @ExceptionHandler({UserAlreadyExistException.class, InvalidPasswordException.class})
+    @ExceptionHandler({UserAlreadyExistException.class, InvalidPasswordException.class, DateTimeParseException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequest(RuntimeException runtimeException){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
     }
 
-    @ExceptionHandler({JWTVerificationException.class})
+    @ExceptionHandler({JWTVerificationException.class, SubscriptionNotAllowedException.class})
     public ResponseEntity<ExceptionResponse> handleForbiddenRequest(RuntimeException runtimeException){
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler({UserNotFoundException.class, CoachNotFoundException.class})
     public ResponseEntity<ExceptionResponse> handleNotFound(RuntimeException runtimeException){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
