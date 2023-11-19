@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,5 +18,10 @@ public class CoachInfoServiceImpl implements CoachInfoService {
     @Override
     public List<CoachInfo> getAll() {
         return coachInfoRepository.findAll();
+    }
+
+    @Override
+    public Optional<CoachInfo> getByCoachId(Long coachId) {
+        return coachInfoRepository.findByCoachId(coachId);
     }
 }

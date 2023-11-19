@@ -78,8 +78,8 @@ public class UserController {
                                                     @RequestBody UserSubscriptionCreationDto userSubscriptionCreationDto,
                                                     Principal principal){
         userSubscriptionService.buySubscription(subscriptionService.getById(subscriptionId),
-                userService.findByEmail(principal.getName()).get(),
-                userSubscriptionCreationDto.getCoachId());
+                principal.getName(),
+                userSubscriptionCreationDto);
         return ResponseEntity.ok().build();
     }
 }

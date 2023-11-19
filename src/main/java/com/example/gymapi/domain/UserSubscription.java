@@ -27,14 +27,23 @@ public class UserSubscription {
     @Column(name = "trainings_left")
     private Integer trainingsLeft;
 
-    @OneToOne(orphanRemoval = true)
+    @ManyToOne
     @JoinColumn(name = "coach_id")
     private User coach;
 
     @Column(name = "purchase_date")
-    private LocalDate purchaseDate = LocalDate.now();
+    private LocalDate purchaseDate;
 
     @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
+    public void addUser(User user){
+        this.setUser(user);
+        user.addSubscription(this);
+    }
+
+    public void addSubscription(Subscription subscription){
+        this.setSubscription(subscription);
+        subscription.addUserSubscription(this);
+    }
 }
