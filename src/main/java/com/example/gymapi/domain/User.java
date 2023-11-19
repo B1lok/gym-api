@@ -44,15 +44,31 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<UserSubscription> userSubscriptions = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Training> trainings = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coach", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Training> records = new LinkedHashSet<>();
 
 
-    public void addSubscription(UserSubscription userSubscription){
+    public void addSubscription(UserSubscription userSubscription) {
         userSubscriptions.add(userSubscription);
+    }
+
+    public void addTraining(Training training) {
+        trainings.add(training);
+    }
+
+    public void removeTraining(Training training) {
+        trainings.remove(training);
+    }
+
+    public void addRecord(Training training) {
+        records.add(training);
+    }
+
+    public void removeRecord(Training training) {
+        records.remove(training);
     }
 
     @Override
@@ -60,9 +76,10 @@ public class User implements UserDetails {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_".concat(role.name()))).toList();
     }
+
     @Override
     public String getPassword() {
-        return password ;
+        return password;
     }
 
     @Override

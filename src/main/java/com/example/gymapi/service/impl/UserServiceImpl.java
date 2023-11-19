@@ -25,13 +25,14 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final JwtService jwtService;
+
     @Override
     @Transactional
     public User createUser(User user) {
         if (userRepository.existsByPhoneNumber(user.getPhoneNumber())) {
             throw new UserAlreadyExistException("User with phone number %s already exist".formatted(user.getPhoneNumber()));
         }
-        if (userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new UserAlreadyExistException("User with email %s already exist".formatted(user.getEmail()));
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -41,10 +42,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    @Transactional
     public Optional<DecodedJWT> signIn(String email, String password) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User with this email doesn't exist"));
-        if (!passwordEncoder.matches(password, user.getPassword())) throw new InvalidPasswordException("Invalid password");
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            throw new InvalidPasswordException("Invalid password");
         return jwtService.verifyAccessToken(jwtService.createJwtToken(user));
     }
 
