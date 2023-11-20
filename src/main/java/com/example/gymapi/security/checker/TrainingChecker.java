@@ -3,6 +3,7 @@ package com.example.gymapi.security.checker;
 import com.example.gymapi.data.TrainingRepository;
 import com.example.gymapi.data.UserRepository;
 import com.example.gymapi.data.UserSubscriptionRepository;
+import com.example.gymapi.domain.Role;
 import com.example.gymapi.domain.TrainingStatus;
 import com.example.gymapi.exception.SubscriptionNotFoundException;
 import com.example.gymapi.exception.TrainingNotFoundException;
@@ -22,6 +23,8 @@ public class TrainingChecker {
     public boolean checkForEnroll(String userEmail, Long userSubscriptionId, Long coachId) {
         var user = userRepository.findByEmail(userEmail).get();
 
+        if (user.getRoles().contains(Role.COACH) || user.getRoles().contains(Role.ADMIN)) return false;
+
         var userSubscription = userSubscriptionRepository.findById(userSubscriptionId).orElseThrow(
                 () -> new SubscriptionNotFoundException("Subscription not found")
         );
@@ -31,6 +34,8 @@ public class TrainingChecker {
 
     public boolean checkForCancel(String userEmail, Long trainingId) {
         var user = userRepository.findByEmail(userEmail).get();
+
+        if (user.getRoles().contains(Role.COACH) || user.getRoles().contains(Role.ADMIN)) return false;
 
         var training = trainingRepository.findById(trainingId).orElseThrow(
                 () -> new TrainingNotFoundException("Training wasn't found")

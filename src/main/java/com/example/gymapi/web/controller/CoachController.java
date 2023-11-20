@@ -6,10 +6,12 @@ import com.example.gymapi.service.CoachInfoService;
 import com.example.gymapi.service.TrainingService;
 import com.example.gymapi.service.UserService;
 import com.example.gymapi.web.dto.coach.CoachInfoDto;
+import com.example.gymapi.web.dto.coach.CoachInfoUpdateDto;
 import com.example.gymapi.web.dto.training.TrainingForCoachDto;
 import com.example.gymapi.web.mapper.CoachInfoMapper;
 import com.example.gymapi.web.mapper.TrainingMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -57,4 +59,13 @@ public class CoachController {
         trainingService.cancelTraining(record, record.getUserSubscription());
         return ResponseEntity.noContent().build();
     }
+
+    @PatchMapping("/update")
+    public ResponseEntity<CoachInfoDto> updateProfessionalInformation(@Valid @RequestBody CoachInfoUpdateDto coachInfoUpdateDto,
+                                                              Principal principal){
+        var coachInfo = coachInfoService.getByCoachId(userService.findByEmail(principal.getName()).get().getId()).get();
+        var updatedCoachInfo = coachInfoService.updateCoachInfo(coachInfoMapper.partialUpdate(coachInfoUpdateDto, coachInfo));
+        return ResponseEntity.ok(coachInfoMapper.toDto(updatedCoachInfo));
+    }
+
 }
