@@ -1,6 +1,5 @@
 package com.example.gymapi.service.impl;
 
-import com.example.gymapi.data.UserRepository;
 import com.example.gymapi.data.UserSubscriptionRepository;
 import com.example.gymapi.domain.*;
 import com.example.gymapi.exception.CoachNotFoundException;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -30,10 +29,15 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
 
     @Override
+    public Optional<UserSubscription> findById(Long id) {
+        return userSubscriptionRepository.findById(id);
+    }
+
+    @Override
     @Transactional
     public void buySubscription(Subscription subscription, String email, UserSubscriptionCreationDto dto) {
         User user = userService.findByEmail(email).get();
-        if (!isUserAllowedToBuySubscription(user.getUserSubscriptions(), subscription.getSubscriptionType(), dto.getPurchaseDate())){
+        if (!isUserAllowedToBuySubscription(user.getUserSubscriptions(), subscription.getSubscriptionType(), dto.getPurchaseDate())) {
             throw new SubscriptionNotAllowedException("You already have this type of subscription");
         }
         var userSubscription = new UserSubscription();
@@ -42,7 +46,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
             CoachInfo coachInfo = coachInfoService.getByCoachId(dto.getCoachId()).orElseThrow(
                     () -> new CoachNotFoundException("Coach not found")
             );
-            if (!coachInfo.getSpecialization().equals(subscription.getSubscriptionType())){
+            if (!coachInfo.getSpecialization().equals(subscription.getSubscriptionType())) {
                 throw new CoachNotFoundException("Select coach with appropriate specialization");
             }
             userSubscription.setCoach(coachInfo.getCoach());
@@ -56,10 +60,9 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
     }
 
 
-    boolean isUserAllowedToBuySubscription(Set<UserSubscription> subscriptions, GymZone subscriptionType, LocalDate purchaseDate){
+    boolean isUserAllowedToBuySubscription(Set<UserSubscription> subscriptions, GymZone subscriptionType, LocalDate purchaseDate) {
         return subscriptions.stream()
                 .filter(subscription -> subscription.getSubscription().getSubscriptionType().equals(subscriptionType))
                 .noneMatch(subscription -> purchaseDate.isBefore(subscription.getExpirationDate()) && subscription.getTrainingsLeft() != 0);
     }
-
 }

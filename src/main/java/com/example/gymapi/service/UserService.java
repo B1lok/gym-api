@@ -9,6 +9,8 @@ public interface UserService {
 
     User createUser(User user);
 
+    Optional<User> findById(Long id);
+
     Optional<DecodedJWT> signIn(String login, String password);
 
     Optional<User> findByEmail(String email);

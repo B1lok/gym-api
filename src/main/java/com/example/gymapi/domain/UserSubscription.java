@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,13 +39,32 @@ public class UserSubscription {
     @Column(name = "expiration_date")
     private LocalDate expirationDate;
 
-    public void addUser(User user){
+    @OneToMany(mappedBy = "userSubscription", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    private List<Training> trainings = new ArrayList<>();
+
+    public void addUser(User user) {
         this.setUser(user);
         user.addSubscription(this);
     }
 
-    public void addSubscription(Subscription subscription){
+    public void addSubscription(Subscription subscription) {
         this.setSubscription(subscription);
         subscription.addUserSubscription(this);
+    }
+
+    public void addTraining(Training training) {
+        trainings.add(training);
+    }
+
+    public void removeTraining(Training training) {
+        trainings.remove(training);
+    }
+
+    public void incrementTrainingsLeft() {
+        this.setTrainingsLeft(trainingsLeft + 1);
+    }
+
+    public void decrementTrainingsLeft() {
+        this.setTrainingsLeft(trainingsLeft - 1);
     }
 }

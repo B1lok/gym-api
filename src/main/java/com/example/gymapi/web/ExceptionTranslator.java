@@ -19,28 +19,34 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionTranslator {
 
-    @ExceptionHandler({UserAlreadyExistException.class, InvalidPasswordException.class, DateTimeParseException.class})
-    public ResponseEntity<ExceptionResponse> handleBadRequest(RuntimeException runtimeException){
+    @ExceptionHandler({UserAlreadyExistException.class,
+            InvalidPasswordException.class,
+            DateTimeParseException.class,
+            InvalidDateTimeException.class})
+    public ResponseEntity<ExceptionResponse> handleBadRequest(RuntimeException runtimeException) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
     }
 
     @ExceptionHandler({JWTVerificationException.class, SubscriptionNotAllowedException.class})
-    public ResponseEntity<ExceptionResponse> handleForbiddenRequest(RuntimeException runtimeException){
+    public ResponseEntity<ExceptionResponse> handleForbiddenRequest(RuntimeException runtimeException) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
     }
 
-    @ExceptionHandler({UserNotFoundException.class, CoachNotFoundException.class})
-    public ResponseEntity<ExceptionResponse> handleNotFound(RuntimeException runtimeException){
+    @ExceptionHandler({UserNotFoundException.class,
+            CoachNotFoundException.class,
+            SubscriptionNotFoundException.class,
+            TrainingNotFoundException.class})
+    public ResponseEntity<ExceptionResponse> handleNotFound(RuntimeException runtimeException) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ExceptionResponse(runtimeException.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, List<String>>> handleNotValidData(MethodArgumentNotValidException exception){
+    public ResponseEntity<Map<String, List<String>>> handleNotValidData(MethodArgumentNotValidException exception) {
         Map<String, List<String>> errors = exception.getFieldErrors().stream()
-                .filter(ex -> ex.getDefaultMessage()!= null)
+                .filter(ex -> ex.getDefaultMessage() != null)
                 .collect(Collectors.groupingBy(FieldError::getField, Collectors.mapping(FieldError::getDefaultMessage, Collectors.toList())));
         return ResponseEntity.badRequest().body(errors);
     }

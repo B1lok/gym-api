@@ -1,16 +1,21 @@
 package com.example.gymapi.web.controller;
 
 
+import com.example.gymapi.domain.User;
 import com.example.gymapi.service.SubscriptionService;
+import com.example.gymapi.service.TrainingService;
 import com.example.gymapi.service.UserService;
 import com.example.gymapi.service.UserSubscriptionService;
 import com.example.gymapi.web.dto.ExceptionResponse;
-import com.example.gymapi.web.dto.subscription.SubscriptionDto;
+import com.example.gymapi.web.dto.training.TrainingCreationDto;
+import com.example.gymapi.web.dto.training.TrainingDto;
 import com.example.gymapi.web.dto.user.UserDto;
 import com.example.gymapi.web.dto.user.UserUpdateDto;
 import com.example.gymapi.web.dto.userSubscription.UserSubscriptionCreationDto;
-import com.example.gymapi.web.mapper.SubscriptionMapper;
+import com.example.gymapi.web.dto.userSubscription.UserSubscriptionDto;
+import com.example.gymapi.web.mapper.TrainingMapper;
 import com.example.gymapi.web.mapper.UserMapper;
+import com.example.gymapi.web.mapper.UserSubscriptionMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,6 +45,12 @@ public class UserController {
     private final UserSubscriptionService userSubscriptionService;
 
     private final SubscriptionService subscriptionService;
+
+    private final UserSubscriptionMapper userSubscriptionMapper;
+
+    private final TrainingService trainingService;
+
+    private final TrainingMapper trainingMapper;
 
     @Operation(summary = "Get user information", responses = {
             @ApiResponse(responseCode = "200",
@@ -73,13 +84,50 @@ public class UserController {
                 .map(userMapper::toDto));
     }
 
+    @GetMapping("/mySubscriptions")
+    public ResponseEntity<List<UserSubscriptionDto>> getMySubscriptions(Principal principal) {
+        return ResponseEntity.of(userService.findByEmail(principal.getName())
+                .map(User::getUserSubscriptions)
+                .map(subscriptions -> subscriptions.stream()
+                        .map(userSubscriptionMapper::toDto).toList()));
+    }
+
     @PostMapping("/buySubscription/{subscriptionId}")
     public ResponseEntity<Void> buyUserSubscription(@PathVariable Long subscriptionId,
-                                                    @RequestBody UserSubscriptionCreationDto userSubscriptionCreationDto,
-                                                    Principal principal){
+                                                    @Valid @RequestBody UserSubscriptionCreationDto userSubscriptionCreationDto,
+                                                    Principal principal) {
         userSubscriptionService.buySubscription(subscriptionService.getById(subscriptionId),
                 principal.getName(),
                 userSubscriptionCreationDto);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/myTrainings")
+    public ResponseEntity<List<TrainingDto>> getMyTrainings(Principal principal) {
+        return ResponseEntity.of(userService.findByEmail(principal.getName())
+                .map(User::getTrainings)
+                .map(trainings -> trainings.stream()
+                        .map(trainingMapper::toDto).toList()));
+    }
+
+    @PostMapping("/training/enroll/{userSubscriptionId}/{coachId}")
+    @PreAuthorize("@trainingChecker.checkForEnroll(#principal.getName(), #userSubscriptionId, #coachId)")
+    public ResponseEntity<Void> enrollForTraining(@PathVariable Long userSubscriptionId,
+                                                  @PathVariable Long coachId,
+                                                  @Valid @RequestBody TrainingCreationDto trainingCreationDto,
+                                                  Principal principal) {
+        trainingService.createTraining(userService.findByEmail(principal.getName()).get(),
+                trainingMapper.toEntity(trainingCreationDto),
+                userSubscriptionService.findById(userSubscriptionId).get(),
+                userService.findById(coachId).get());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/training/cancel/{trainingId}")
+    @PreAuthorize("@trainingChecker.checkForCancel(#principal.getName(),#trainingId)")
+    public ResponseEntity<Void> cancelTraining(@PathVariable Long trainingId, Principal principal) {
+        var training = trainingService.findById(trainingId).get();
+        trainingService.cancelTraining(training, training.getUserSubscription());
         return ResponseEntity.ok().build();
     }
 }
