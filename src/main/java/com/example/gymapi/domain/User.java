@@ -71,6 +71,21 @@ public class User implements UserDetails {
         records.remove(training);
     }
 
+    public void addAdminRole(){
+        roles.add(Role.ADMIN);
+    }
+
+    public void removeAdminRole(){
+        roles.remove(Role.ADMIN);
+    }
+
+    public void addCoachRole(){
+        roles.add(Role.COACH);
+    }
+
+    public void removeCoachRole(){
+        roles.remove(Role.COACH);
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

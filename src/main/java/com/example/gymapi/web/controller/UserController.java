@@ -85,6 +85,7 @@ public class UserController {
     }
 
     @GetMapping("/mySubscriptions")
+    @PreAuthorize("@roleChecker.checkForAllowedRoles(#principal.getName())")
     public ResponseEntity<List<UserSubscriptionDto>> getMySubscriptions(Principal principal) {
         return ResponseEntity.of(userService.findByEmail(principal.getName())
                 .map(User::getUserSubscriptions)
@@ -93,6 +94,7 @@ public class UserController {
     }
 
     @PostMapping("/buySubscription/{subscriptionId}")
+    @PreAuthorize("@roleChecker.checkForAllowedRoles(#principal.getName())")
     public ResponseEntity<Void> buyUserSubscription(@PathVariable Long subscriptionId,
                                                     @Valid @RequestBody UserSubscriptionCreationDto userSubscriptionCreationDto,
                                                     Principal principal) {
@@ -103,6 +105,7 @@ public class UserController {
     }
 
     @GetMapping("/myTrainings")
+    @PreAuthorize("@roleChecker.checkForAllowedRoles(#principal.getName())")
     public ResponseEntity<List<TrainingDto>> getMyTrainings(Principal principal) {
         return ResponseEntity.of(userService.findByEmail(principal.getName())
                 .map(User::getTrainings)

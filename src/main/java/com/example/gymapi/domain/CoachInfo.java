@@ -14,7 +14,7 @@ public class CoachInfo {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne
     @JoinColumn(name = "coach_id")
     private User coach;
 

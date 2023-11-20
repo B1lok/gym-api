@@ -5,6 +5,7 @@ import com.example.gymapi.domain.CoachInfo;
 import com.example.gymapi.service.CoachInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,5 +24,11 @@ public class CoachInfoServiceImpl implements CoachInfoService {
     @Override
     public Optional<CoachInfo> getByCoachId(Long coachId) {
         return coachInfoRepository.findByCoachId(coachId);
+    }
+
+    @Override
+    @Transactional
+    public CoachInfo updateCoachInfo(CoachInfo coachInfo) {
+        return coachInfoRepository.save(coachInfo);
     }
 }

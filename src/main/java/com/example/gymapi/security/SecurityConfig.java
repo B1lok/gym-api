@@ -33,7 +33,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/sign-up").anonymous();
                     auth.requestMatchers("/sign-in").anonymous();
                     auth.requestMatchers(HttpMethod.GET, ALLOWED_GET_METHODS).permitAll();
-                    auth.requestMatchers("/gym/user/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name());
+                    auth.requestMatchers("/gym/user/**").hasAnyRole(Role.USER.name(), Role.ADMIN.name(), Role.COACH.name());
                     auth.requestMatchers("/gym/subscriptions/**").hasRole(Role.ADMIN.name());
                     auth.requestMatchers("/gym/coach/**").hasRole(Role.COACH.name());
                     auth.requestMatchers("/gym/admin/**").hasRole(Role.ADMIN.name());

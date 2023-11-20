@@ -10,4 +10,6 @@ public interface CoachInfoService {
     List<CoachInfo> getAll();
 
     Optional<CoachInfo> getByCoachId(Long coachId);
+
+    CoachInfo updateCoachInfo(CoachInfo coachInfo);
 }
