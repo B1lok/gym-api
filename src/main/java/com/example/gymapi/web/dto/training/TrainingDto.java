@@ -1,6 +1,7 @@
 package com.example.gymapi.web.dto.training;
 
 import com.example.gymapi.domain.GymZone;
+import com.example.gymapi.domain.TrainingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -19,6 +20,7 @@ public class TrainingDto implements Serializable {
     private final LocalDate trainingDate;
     private final LocalTime trainingStart;
     private final LocalTime trainingEnd;
+    private final TrainingStatus trainingStatus;
     private final Long coachId;
     private final String coachFirstName;
     private final String coachLastName;
