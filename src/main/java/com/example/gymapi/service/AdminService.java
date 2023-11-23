@@ -1,5 +1,6 @@
 package com.example.gymapi.service;
 
+import com.example.gymapi.domain.CoachInfo;
 import com.example.gymapi.domain.User;
 
 public interface AdminService {
@@ -8,7 +9,7 @@ public interface AdminService {
 
     void takeAdminRole(User user);
 
-    void giveCoachRole(User user);
+    void giveCoachRole(User user, CoachInfo coachInfo);
 
     void takeCoachRole(User user);
 

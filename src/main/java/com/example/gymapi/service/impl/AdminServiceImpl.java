@@ -19,10 +19,9 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void giveCoachRole(User user) {
+    public void giveCoachRole(User user, CoachInfo coachInfo) {
         user.addCoachRole();
         userRepository.save(user);
-        var coachInfo = new CoachInfo();
         coachInfo.setCoach(user);
         coachInfoRepository.save(coachInfo);
     }
