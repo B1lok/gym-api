@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 @Data
 public class CoachInfoDto implements Serializable {
-    private final Long coachId;
+    private final Long id;
     private final String coachFirstName;
     private final String coachLastName;
     private final String coachEmail;

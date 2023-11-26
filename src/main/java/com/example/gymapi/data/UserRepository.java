@@ -21,6 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE SIZE(u.roles) = 1 AND :role MEMBER OF u.roles")
     List<User> findCustomers(@Param("role") Role role);
 
+    @Query("SELECT u FROM User u WHERE :role MEMBER OF u.roles")
+    List<User> findStaffMemberByRole(@Param("role") Role role);
+
     boolean existsByPhoneNumber(String phoneNumber);
 
     @Query("select u from User u where u.email = :email and u.id != :id")

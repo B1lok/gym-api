@@ -18,7 +18,7 @@ public class UserSubscription {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -28,6 +28,13 @@ public class UserSubscription {
 
     @Column(name = "trainings_left")
     private Integer trainingsLeft;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "subscription_type")
+    private GymZone subscriptionType;
+
+    @Column(name = "with_coach")
+    private Boolean subscriptionWithCoach;
 
     @ManyToOne
     @JoinColumn(name = "coach_id")
@@ -50,6 +57,11 @@ public class UserSubscription {
     public void addSubscription(Subscription subscription) {
         this.setSubscription(subscription);
         subscription.addUserSubscription(this);
+    }
+
+    public void removeSubscription(Subscription subscription){
+        this.setSubscription(null);
+        subscription.removeUserSubscription(this);
     }
 
     public void addTraining(Training training) {

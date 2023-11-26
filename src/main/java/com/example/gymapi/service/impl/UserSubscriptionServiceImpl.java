@@ -51,6 +51,8 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
             }
             userSubscription.setCoach(coachInfo.getCoach());
         }
+        userSubscription.setSubscriptionType(subscription.getSubscriptionType());
+        userSubscription.setSubscriptionWithCoach(subscription.getWithCoach());
         userSubscription.setPurchaseDate(dto.getPurchaseDate());
         userSubscription.setExpirationDate(dto.getPurchaseDate().plusDays(subscription.getDurationInDays()));
         userSubscription.addSubscription(subscription);
@@ -62,7 +64,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
 
     boolean isUserAllowedToBuySubscription(Set<UserSubscription> subscriptions, GymZone subscriptionType, LocalDate purchaseDate) {
         return subscriptions.stream()
-                .filter(subscription -> subscription.getSubscription().getSubscriptionType().equals(subscriptionType))
+                .filter(subscription -> subscription.getSubscriptionType().equals(subscriptionType))
                 .noneMatch(subscription -> purchaseDate.isBefore(subscription.getExpirationDate()) && subscription.getTrainingsLeft() != 0);
     }
 }

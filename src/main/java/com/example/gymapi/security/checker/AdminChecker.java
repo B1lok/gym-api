@@ -1,8 +1,10 @@
 package com.example.gymapi.security.checker;
 
+import com.example.gymapi.data.CoachInfoRepository;
 import com.example.gymapi.data.UserRepository;
 import com.example.gymapi.domain.Role;
 import com.example.gymapi.domain.TrainingStatus;
+import com.example.gymapi.exception.CoachNotFoundException;
 import com.example.gymapi.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Component;
 public class AdminChecker {
 
     public final UserRepository userRepository;
+
+    public final CoachInfoRepository coachInfoRepository;
 
     public boolean checkIsUserCustomer(Long userId) {
         var user = userRepository.findById(userId).orElseThrow(
@@ -28,6 +32,13 @@ public class AdminChecker {
         if (user.getRoles().contains(Role.ADMIN) || user.getRoles().contains(Role.COACH)) return false;
 
         return true;
+    }
+
+    public boolean checkForGettingCoachRecords(Long coachId){
+        var coach = userRepository.findById(coachId).orElseThrow(
+                () -> new CoachNotFoundException("Coach with this id doesn't exist")
+        );
+        return coach.getRoles().contains(Role.COACH);
     }
 
     public boolean checkForTakingAdminRole(Long userId, String adminEmail){
@@ -53,11 +64,15 @@ public class AdminChecker {
                 .noneMatch(training -> training.getTrainingStatus().equals(TrainingStatus.ACTIVE));
     }
 
-    public boolean checkForTakingCoachRole(Long userId){
-        var user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("User with this id doesn't exist")
+    public boolean checkForTakingCoachRole(Long coachId, Long coachToReplaceId){
+        var coach = coachInfoRepository.findByCoachId(coachId).orElseThrow(
+                () -> new CoachNotFoundException("This coach doesn't exist")
         );
 
-        return user.getRoles().contains(Role.COACH);
+        var coachToReplace = coachInfoRepository.findByCoachId(coachToReplaceId).orElseThrow(
+                () -> new CoachNotFoundException("This coach doesn't exist")
+        );
+
+        return coach.getSpecialization().equals(coachToReplace.getSpecialization());
     }
 }

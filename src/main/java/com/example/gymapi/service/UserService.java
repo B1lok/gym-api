@@ -20,4 +20,8 @@ public interface UserService {
 
     List<User> getAllCustomers();
 
+    List<User> getAllAdmins(Long currentAdminId);
+
+    List<User> getAllCoaches();
+
 }

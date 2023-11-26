@@ -34,10 +34,14 @@ public class Subscription {
     @Column(name = "with_coach")
     private Boolean withCoach;
 
-    @OneToMany(mappedBy = "subscription", cascade = CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval = true)
+    @OneToMany(mappedBy = "subscription", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER,orphanRemoval = true)
     private Set<UserSubscription> userSubscriptions = new LinkedHashSet<>();
 
     public void addUserSubscription(UserSubscription userSubscription){
         userSubscriptions.add(userSubscription);
+    }
+
+    public void removeUserSubscription(UserSubscription userSubscription) {
+        userSubscriptions.remove(userSubscription);
     }
 }
