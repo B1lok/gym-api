@@ -10,7 +10,7 @@ import org.mapstruct.*;
 public interface CoachInfoMapper {
     CoachInfo toEntity(CoachInfoCreationDto coachInfoCreationDto);
 
-    @Mapping(target = "coachId", expression = "java(coachInfo.getCoach().getId())")
+    @Mapping(target = "id", expression = "java(coachInfo.getCoach().getId())")
     @Mapping(target = "coachFirstName", expression = "java(coachInfo.getCoach().getFirstName())")
     @Mapping(target = "coachLastName", expression = "java(coachInfo.getCoach().getLastName())")
     @Mapping(target = "coachEmail", expression = "java(coachInfo.getCoach().getEmail())")

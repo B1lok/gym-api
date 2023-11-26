@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,6 +41,7 @@ public class SubscriptionController {
     }
 
     @PatchMapping("/updateSubscription/{id}")
+    @PreAuthorize("@subscriptionChecker.check(#id)")
     public ResponseEntity<SubscriptionDto> updateSubscription(@PathVariable Long id,
                                                               @Valid @RequestBody SubscriptionUpdateDto subscriptionUpdateDto) {
         var updated = subscriptionService.updateOne(subscriptionMapper.partialUpdate(subscriptionUpdateDto, subscriptionService.getById(id)));
@@ -47,8 +49,9 @@ public class SubscriptionController {
     }
 
     @DeleteMapping("/deleteSubscription/{id}")
+    @PreAuthorize("@subscriptionChecker.check(#id)")
     public ResponseEntity<Void> deleteSubscription(@PathVariable Long id){
-        subscriptionService.deleteOne(id);
+        subscriptionService.deleteOne(subscriptionService.getById(id));
         return ResponseEntity.noContent().build();
     }
 

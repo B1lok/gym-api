@@ -11,6 +11,6 @@ public interface AdminService {
 
     void giveCoachRole(User user, CoachInfo coachInfo);
 
-    void takeCoachRole(User user);
+    void takeCoachRole(User coach, User coachToReplace);
 
 }

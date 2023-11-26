@@ -75,7 +75,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public List<User> getAllCustomers() {
         return userRepository.findCustomers(Role.USER);
+    }
+
+    @Override
+    @Transactional
+    public List<User> getAllAdmins(Long currentAdminId) {
+        return userRepository.findStaffMemberByRole(Role.ADMIN)
+                .stream().filter(user -> !user.getId().equals(currentAdminId)).toList();
+    }
+
+    @Override
+    @Transactional
+    public List<User> getAllCoaches() {
+        return userRepository.findStaffMemberByRole(Role.COACH);
     }
 }

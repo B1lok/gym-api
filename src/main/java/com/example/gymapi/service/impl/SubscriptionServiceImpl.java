@@ -1,6 +1,7 @@
 package com.example.gymapi.service.impl;
 
 import com.example.gymapi.data.SubscriptionRepository;
+import com.example.gymapi.data.UserSubscriptionRepository;
 import com.example.gymapi.domain.Subscription;
 import com.example.gymapi.exception.SubscriptionNotFoundException;
 import com.example.gymapi.service.SubscriptionService;
@@ -9,13 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
+
+    private final UserSubscriptionRepository userSubscriptionRepository;
 
     @Override
     public List<Subscription> findAll() {
@@ -24,8 +26,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional
-    public void deleteOne(Long id) {
-        subscriptionRepository.deleteById(id);
+    public void deleteOne(Subscription subscription) {
+        subscription.getUserSubscriptions().forEach(userSubscription -> {
+            userSubscription.removeSubscription(subscription);
+            userSubscriptionRepository.save(userSubscription);
+        });
+        subscriptionRepository.delete(subscription);
     }
 
     @Override

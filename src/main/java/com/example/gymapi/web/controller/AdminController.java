@@ -3,9 +3,12 @@ package com.example.gymapi.web.controller;
 
 import com.example.gymapi.domain.Training;
 import com.example.gymapi.service.AdminService;
+import com.example.gymapi.service.CoachInfoService;
 import com.example.gymapi.service.UserService;
 import com.example.gymapi.web.dto.coach.CoachInfoCreationDto;
+import com.example.gymapi.web.dto.coach.CoachInfoDto;
 import com.example.gymapi.web.dto.training.TrainingDto;
+import com.example.gymapi.web.dto.training.TrainingForCoachDto;
 import com.example.gymapi.web.dto.user.UserDto;
 import com.example.gymapi.web.dto.userSubscription.UserSubscriptionDto;
 import com.example.gymapi.web.mapper.CoachInfoMapper;
@@ -42,10 +45,31 @@ public class AdminController {
 
     private final CoachInfoMapper coachInfoMapper;
 
+    private final CoachInfoService coachInfoService;
+
     @GetMapping("/getCustomers")
     public ResponseEntity<List<UserDto>> getAllCustomers(){
         return ResponseEntity.ok(userService.getAllCustomers().stream()
                 .map(userMapper::toDto).toList());
+    }
+
+    @GetMapping("/getAdmins")
+    public ResponseEntity<List<UserDto>> getAllAdmins(Principal principal){
+        Long adminId = userService.findByEmail(principal.getName()).get().getId();
+        return ResponseEntity.ok(userService.getAllAdmins(adminId).stream()
+                .map(userMapper::toDto).toList());
+    }
+
+    @GetMapping("/getCoaches")
+    public ResponseEntity<List<CoachInfoDto>> getAllCoaches(){
+        return ResponseEntity.ok(coachInfoService.getAll().stream()
+                .map(coachInfoMapper::toDto).toList());
+    }
+
+    @GetMapping("/getCoachRecords/{coachId}")
+    public ResponseEntity<List<TrainingForCoachDto>> getCoachRecords(@PathVariable Long coachId){
+        return ResponseEntity.ok(userService.findById(coachId).get().getRecords().stream()
+                .map(trainingMapper::toTrainingForCoachDto).toList());
     }
 
     @GetMapping("/getCustomerSubscriptions/{customerId}")
@@ -85,10 +109,10 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/takeCoachRole/{userId}")
-    @PreAuthorize("@adminChecker.checkForTakingCoachRole(#userId)")
-    public ResponseEntity<Void> takeCoachRole(@PathVariable Long userId){
-        adminService.takeCoachRole(userService.findById(userId).get());
+    @PostMapping("/takeCoachRole/{coachId}/{coachToReplaceId}")
+    @PreAuthorize("@adminChecker.checkForTakingCoachRole(#coachId, #coachToReplaceId)")
+    public ResponseEntity<Void> takeCoachRole(@PathVariable Long coachId, @PathVariable Long coachToReplaceId){
+        adminService.takeCoachRole(userService.findById(coachId).get(), userService.findById(coachToReplaceId).get());
         return ResponseEntity.ok().build();
     }
 }

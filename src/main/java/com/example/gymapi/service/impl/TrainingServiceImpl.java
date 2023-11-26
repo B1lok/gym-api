@@ -1,6 +1,7 @@
 package com.example.gymapi.service.impl;
 
 import com.example.gymapi.data.TrainingRepository;
+import com.example.gymapi.data.UserRepository;
 import com.example.gymapi.data.UserSubscriptionRepository;
 import com.example.gymapi.domain.Training;
 import com.example.gymapi.domain.TrainingStatus;
@@ -23,6 +24,8 @@ public class TrainingServiceImpl implements TrainingService {
 
     private final TrainingRepository trainingRepository;
 
+    private final UserRepository userRepository;
+
     @Override
     @Transactional
     public void cancelTraining(Training training, UserSubscription userSubscription) {
@@ -30,6 +33,8 @@ public class TrainingServiceImpl implements TrainingService {
         training.removeSubscription(training.getUserSubscription());
         training.removeTrainingUser(training.getUser());
         training.removeTrainingCoach(training.getCoach());
+        userRepository.save(training.getCoach());
+        userRepository.save(training.getUser());
         userSubscriptionRepository.save(userSubscription);
         trainingRepository.delete(training);
     }
@@ -45,7 +50,7 @@ public class TrainingServiceImpl implements TrainingService {
         if (!isTrainingDateTimeCorrect(training, userSubscription)) {
             throw new InvalidDateTimeException("Invalid date/time");
         }
-        training.setTrainingType(userSubscription.getSubscription().getSubscriptionType());
+        training.setTrainingType(userSubscription.getSubscriptionType());
         training.setTrainingStatus(TrainingStatus.ACTIVE);
         training.setTrainingUser(user);
         training.setTrainingCoach(coach);
