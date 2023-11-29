@@ -2,6 +2,7 @@ package com.example.gymapi.service;
 
 import com.example.gymapi.domain.CoachInfo;
 import com.example.gymapi.domain.User;
+import com.example.gymapi.web.dto.statistic.StatisticDto;
 
 public interface AdminService {
 
@@ -12,5 +13,7 @@ public interface AdminService {
     void giveCoachRole(User user, CoachInfo coachInfo);
 
     void takeCoachRole(User coach, User coachToReplace);
+
+    StatisticDto getStatistic();
 
 }

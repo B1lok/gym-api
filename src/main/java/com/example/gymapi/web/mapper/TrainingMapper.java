@@ -1,6 +1,7 @@
 package com.example.gymapi.web.mapper;
 
 import com.example.gymapi.domain.Training;
+import com.example.gymapi.domain.UserSubscription;
 import com.example.gymapi.web.dto.training.TrainingCreationDto;
 import com.example.gymapi.web.dto.training.TrainingDto;
 import com.example.gymapi.web.dto.training.TrainingForCoachDto;
@@ -10,9 +11,9 @@ import org.mapstruct.*;
 public interface TrainingMapper {
     Training toEntity(TrainingCreationDto trainingCreationDto);
 
-    @Mapping(target = "coachId", expression = "java(training.getCoach().getId())")
-    @Mapping(target = "coachFirstName", expression = "java(training.getCoach().getFirstName())")
-    @Mapping(target = "coachLastName", expression = "java(training.getCoach().getLastName())")
+    @Mapping(target = "coachId", source = "training",qualifiedByName = "mapCoachId")
+    @Mapping(target = "coachFirstName",source = "training", qualifiedByName = "mapCoachFirstName")
+    @Mapping(target = "coachLastName", source = "training",qualifiedByName = "mapCoachLastName")
     TrainingDto toDto(Training training);
 
     @Mapping(target = "userId", expression = "java(training.getUser().getId())")
@@ -23,4 +24,18 @@ public interface TrainingMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     Training partialUpdate(TrainingDto trainingDto, @MappingTarget Training training);
+
+    @Named("mapCoachId")
+    default Long mapCoachId(Training training) {
+        return training.getCoach() == null ? null : training.getCoach().getId();
+    }
+
+    @Named("mapCoachFirstName")
+    default String mapCoachFirstName(Training training) {
+        return training.getCoach() == null ? null : training.getCoach().getFirstName();
+    }
+    @Named("mapCoachLastName")
+    default String mapCoachLastName(Training training) {
+        return training.getCoach() == null ? null : training.getCoach().getLastName();
+    }
 }

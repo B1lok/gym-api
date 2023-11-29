@@ -4,6 +4,7 @@ import com.example.gymapi.domain.Training;
 import com.example.gymapi.domain.User;
 import com.example.gymapi.domain.UserSubscription;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TrainingService {
@@ -12,4 +13,6 @@ public interface TrainingService {
     void cancelTraining(Training training, UserSubscription userSubscription);
 
     Optional<Training> findById(Long id);
+
+    List<Training> getTrainingsByUserSubscriptionId(Long userSubscriptionId);
 }
