@@ -44,6 +44,12 @@ public class CoachController {
                 .map(coachInfoMapper::toDto).toList());
     }
 
+    @GetMapping("/getCoachInfo")
+    public ResponseEntity<CoachInfoDto> getCoachInfo(Principal principal){
+        var coachInfo = coachInfoService.getByCoachId(userService.findByEmail(principal.getName()).get().getId()).get();
+        return ResponseEntity.ok(coachInfoMapper.toDto(coachInfo));
+    }
+
     @GetMapping("/records/getMyRecords")
     public ResponseEntity<List<TrainingForCoachDto>> getAllMyRecords(Principal principal) {
         return ResponseEntity.of(userService.findByEmail(principal.getName())
