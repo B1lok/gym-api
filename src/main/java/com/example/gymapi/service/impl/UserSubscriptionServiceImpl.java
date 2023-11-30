@@ -33,6 +33,7 @@ public class UserSubscriptionServiceImpl implements UserSubscriptionService {
         return userSubscriptionRepository.findById(id);
     }
 
+
     @Override
     @Transactional
     public void buySubscription(Subscription subscription, String email, UserSubscriptionCreationDto dto) {

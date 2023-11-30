@@ -113,6 +113,13 @@ public class UserController {
                         .map(trainingMapper::toDto).toList()));
     }
 
+    @GetMapping("/myTrainings/{userSubscriptionId}")
+    @PreAuthorize("@userSubscriptionChecker.checkForGettingTrainings(#userSubscriptionId, #principal.getName())")
+    public ResponseEntity<List<TrainingDto>> getTrainingsInSubscription(@PathVariable Long userSubscriptionId, Principal principal){
+        return ResponseEntity.ok(trainingService.getTrainingsByUserSubscriptionId(userSubscriptionId)
+                .stream().map(trainingMapper::toDto).toList());
+    }
+
     @PostMapping("/training/enroll/{userSubscriptionId}/{coachId}")
     @PreAuthorize("@trainingChecker.checkForEnroll(#principal.getName(), #userSubscriptionId, #coachId)")
     public ResponseEntity<Void> enrollForTraining(@PathVariable Long userSubscriptionId,

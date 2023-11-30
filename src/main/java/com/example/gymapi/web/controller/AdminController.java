@@ -5,8 +5,10 @@ import com.example.gymapi.domain.Training;
 import com.example.gymapi.service.AdminService;
 import com.example.gymapi.service.CoachInfoService;
 import com.example.gymapi.service.UserService;
+import com.example.gymapi.service.UserSubscriptionService;
 import com.example.gymapi.web.dto.coach.CoachInfoCreationDto;
 import com.example.gymapi.web.dto.coach.CoachInfoDto;
+import com.example.gymapi.web.dto.statistic.StatisticDto;
 import com.example.gymapi.web.dto.training.TrainingDto;
 import com.example.gymapi.web.dto.training.TrainingForCoachDto;
 import com.example.gymapi.web.dto.user.UserDto;
@@ -47,6 +49,8 @@ public class AdminController {
 
     private final CoachInfoService coachInfoService;
 
+    private final UserSubscriptionService userSubscriptionService;
+
     @GetMapping("/getCustomers")
     public ResponseEntity<List<UserDto>> getAllCustomers(){
         return ResponseEntity.ok(userService.getAllCustomers().stream()
@@ -64,6 +68,11 @@ public class AdminController {
     public ResponseEntity<List<CoachInfoDto>> getAllCoaches(){
         return ResponseEntity.ok(coachInfoService.getAll().stream()
                 .map(coachInfoMapper::toDto).toList());
+    }
+
+    @GetMapping("/getStatistic")
+    public ResponseEntity<StatisticDto> getStatistic(){
+        return ResponseEntity.ok(adminService.getStatistic());
     }
 
     @GetMapping("/getCoachRecords/{coachId}")
