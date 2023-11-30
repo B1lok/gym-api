@@ -17,6 +17,8 @@ public interface CoachInfoMapper {
     @Mapping(target = "coachPhoneNumber", expression = "java(coachInfo.getCoach().getPhoneNumber())")
     CoachInfoDto toDto(CoachInfo coachInfo);
 
+    CoachInfoUpdateDto toDtoForCoach(CoachInfo coachInfo);
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     CoachInfo partialUpdate(CoachInfoUpdateDto coachInfoUpdateDto, @MappingTarget CoachInfo coachInfo);
 }
