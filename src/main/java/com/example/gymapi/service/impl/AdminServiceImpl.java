@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,7 +101,9 @@ public class AdminServiceImpl implements AdminService {
         return Arrays.stream(Month.values())
                 .collect(Collectors.toMap(
                         Month::name,
-                        month -> userSubscriptionRepository.findSubscriptionsSoldInMonth(month.getValue(), currentYear).size()
+                        month -> userSubscriptionRepository.findSubscriptionsSoldInMonth(month.getValue(), currentYear).size(),
+                        (existing, replacement) -> existing,
+                        LinkedHashMap::new
                 ));
     }
 }
