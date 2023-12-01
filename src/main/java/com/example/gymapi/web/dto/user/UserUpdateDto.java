@@ -6,20 +6,21 @@ import lombok.Data;
 
 @Data
 public class UserUpdateDto {
-
-    @NotNull
-    @Size(min = 2, max = 50)
-    @Pattern(regexp = "^[a-zA-Z\\s]*$")
+    @NotBlank(message = "FirstName is required")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Latin letters only")
+    @Size(max = 32, message = "32 characters are maximum")
     private String firstName;
 
-    @NotNull
-    @Size(min = 2, max = 50)
-    @Pattern(regexp = "^[a-zA-Z\\s-]*$")
+    @NotBlank(message = "LastName is required")
+    @Pattern(regexp = "^[a-zA-Z]+$", message = "Latin letters only")
+    @Size(max = 32, message = "32 characters are maximum")
     private String lastName;
 
+    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email")
     private String email;
 
-    @Size(min = 10, max = 15)
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+38\\(0[0-9]{2}\\)[0-9]{3}-[0-9]{2}-[0-9]{2}$", message = "Invalid phone number")
     private String phoneNumber;
 }

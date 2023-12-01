@@ -3,12 +3,12 @@ package com.example.gymapi.web.dto.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+
 @Data
 public class AuthRequest {
-    @NotBlank(message = "Specify Login")
+    @NotBlank(message = "Invalid Login")
     private String email;
 
-    @NotBlank(message = "Specify Password")
+    @NotBlank(message = "Invalid Password")
     private String password;
-
 }
