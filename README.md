@@ -1,8 +1,11 @@
-# Gym Management API
-
+# Gym API
+![POSTGRESQL](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
+![DOCKER](https://img.shields.io/badge/docker-257bd6?style=for-the-badge&logo=docker&logoColor=white)
+![HIBERNATE](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
+![SpringBoot](https://img.shields.io/badge/SpringBoot-6DB33F?style=flat-square&logo=Spring&logoColor=white)
 ## Overview
 
-The Gym Management API allows gym users, trainers, and administrators to manage gym activities such as buying subscriptions, scheduling workouts, checking schedules, and managing users and statistics. This API supports different roles with varying levels of access to the system's functionalities.
+This API allows gym users, trainers, and administrators to manage gym activities such as buying subscriptions, scheduling workouts, checking schedules, and managing users and statistics. This API supports different roles with varying levels of access to the system's functionalities.
 
 ## Features
 
@@ -33,4 +36,9 @@ The API provides the following functionalities, grouped by user roles:
 To run the application execute: 
 ```
 docker-compose up -d
+```
+## API Documentation
+API documentation is available via Swagger once the application is running. To access the Swagger UI, navigate to: 
+```
+http://localhost:8080/swagger-ui.html
 ```
