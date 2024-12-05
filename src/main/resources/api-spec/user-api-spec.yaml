@@ -1,0 +1,345 @@
+openapi: 3.0.0
+info:
+  title: Gym API
+  description: API for managing gym users, subscriptions, and trainings
+  version: 1.0.0
+
+paths:
+  /gym/user/self:
+    get:
+      summary: Get user information
+      tags:
+        - User
+      responses:
+        '200':
+          description: Successfully retrieved user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+    patch:
+      summary: Update user information
+      tags:
+        - User
+      requestBody:
+        description: User data to update
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateDto'
+      responses:
+        '200':
+          description: Successfully updated user information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDto'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/mySubscriptions:
+    get:
+      summary: Get user's subscriptions
+      tags:
+        - Subscriptions
+      responses:
+        '200':
+          description: Successfully retrieved user subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSubscriptionDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/buySubscription/{subscriptionId}:
+    post:
+      summary: Buy a new subscription
+      tags:
+        - Subscriptions
+      parameters:
+        - in: path
+          name: subscriptionId
+          required: true
+          schema:
+            type: integer
+          description: ID of the subscription
+      requestBody:
+        description: User subscription details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSubscriptionCreationDto'
+      responses:
+        '200':
+          description: Subscription successfully purchased
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/myTrainings:
+    get:
+      summary: Get user's trainings
+      tags:
+        - Trainings
+      responses:
+        '200':
+          description: Successfully retrieved user's trainings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/myTrainings/{userSubscriptionId}:
+    get:
+      summary: Get trainings in a subscription
+      tags:
+        - Trainings
+      parameters:
+        - in: path
+          name: userSubscriptionId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user's subscription
+      responses:
+        '200':
+          description: Successfully retrieved trainings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/training/enroll/{userSubscriptionId}/{coachId}:
+    post:
+      summary: Enroll in training
+      tags:
+        - Trainings
+      parameters:
+        - in: path
+          name: userSubscriptionId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user's subscription
+        - in: path
+          name: coachId
+          required: true
+          schema:
+            type: integer
+          description: ID of the coach
+      requestBody:
+        description: Training details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrainingCreationDto'
+      responses:
+        '200':
+          description: Successfully enrolled in training
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/user/training/cancel/{trainingId}:
+    post:
+      summary: Cancel training
+      tags:
+        - Trainings
+      parameters:
+        - in: path
+          name: trainingId
+          required: true
+          schema:
+            type: integer
+          description: ID of the training
+      responses:
+        '200':
+          description: Training successfully canceled
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User ID
+        firstName:
+          type: string
+          description: User's first name
+        lastName:
+          type: string
+          description: User's last name
+        email:
+          type: string
+          description: User's email
+        phoneNumber:
+          type: string
+          description: User's phone number
+
+    UserUpdateDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          description: User's updated first name
+        lastName:
+          type: string
+          description: User's updated last name
+        email:
+          type: string
+          description: User's updated email
+        phoneNumber:
+          type: string
+          description: User's updated phone number
+
+    UserSubscriptionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Subscription ID
+        subscriptionType:
+          type: string
+          description: Type of subscription
+        subscriptionWithCoach:
+          type: boolean
+          description: Indicates if the subscription includes a coach
+        trainingsLeft:
+          type: integer
+          description: Number of trainings left
+        coachId:
+          type: integer
+          description: Coach ID
+        coachFirstName:
+          type: string
+          description: Coach's first name
+        coachLastName:
+          type: string
+          description: Coach's last name
+        purchaseDate:
+          type: string
+          format: date
+          description: Subscription purchase date
+        expirationDate:
+          type: string
+          format: date
+          description: Subscription expiration date
+
+    TrainingDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Training ID
+        trainingType:
+          type: string
+          description: Type of training
+        trainingDate:
+          type: string
+          format: date
+          description: Date of training
+        trainingStart:
+          type: string
+          format: time
+          description: Start time of training
+        trainingEnd:
+          type: string
+          format: time
+          description: End time of training
+        trainingStatus:
+          type: string
+          description: Status of training
+        coachId:
+          type: integer
+          description: Coach ID
+        coachFirstName:
+          type: string
+          description: Coach's first name
+        coachLastName:
+          type: string
+          description: Coach's last name
+
+    TrainingCreationDto:
+      type: object
+      properties:
+        trainingDate:
+          type: string
+          format: date
+          description: Date of training
+        trainingStart:
+          type: string
+          format: time
+          description: Start time of training
+        trainingEnd:
+          type: string
+          format: time
+          description: End time of training
+
+    ExceptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message

@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: Gym API
+  description: API for managing gym subscriptions
+  version: 1.0.0
+paths:
+  /gym/subscriptions:
+    get:
+      summary: Get all possible subscriptions
+      tags:
+        - Subscriptions
+      responses:
+        '200':
+          description: Successfully retrieved all subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+    post:
+      summary: Create a new subscription
+      tags:
+        - Subscriptions
+      requestBody:
+        description: Subscription details for creation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionCreationDto'
+      responses:
+        '201':
+          description: Subscription successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDto'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/subscriptions/updateSubscription/{id}:
+    patch:
+      summary: Update an existing subscription
+      tags:
+        - Subscriptions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the subscription to update
+      requestBody:
+        description: Subscription details for updating
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUpdateDto'
+      responses:
+        '200':
+          description: Subscription successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/subscriptions/deleteSubscription/{id}:
+    delete:
+      summary: Delete an existing subscription
+      tags:
+        - Subscriptions
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the subscription to delete
+      responses:
+        '204':
+          description: Subscription successfully deleted
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+components:
+  schemas:
+    SubscriptionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Subscription ID
+        subscriptionType:
+          $ref: '#/components/schemas/GymZone'
+        price:
+          type: number
+          format: double
+          description: Subscription price
+        visitsAmount:
+          type: integer
+          description: Number of visits allowed
+        durationInDays:
+          type: integer
+          description: Duration of the subscription in days
+        withCoach:
+          type: boolean
+          description: Whether the subscription includes a coach
+
+    SubscriptionCreationDto:
+      type: object
+      properties:
+        subscriptionType:
+          $ref: '#/components/schemas/GymZone'
+        price:
+          type: number
+          format: double
+          description: Subscription price
+        visitsAmount:
+          type: integer
+          description: Number of visits allowed
+        durationInDays:
+          type: integer
+          description: Duration of the subscription in days
+        withCoach:
+          type: boolean
+          description: Whether the subscription includes a coach
+
+    SubscriptionUpdateDto:
+      type: object
+      properties:
+        subscriptionType:
+          $ref: '#/components/schemas/GymZone'
+        price:
+          type: number
+          format: double
+          description: Updated subscription price
+        visitsAmount:
+          type: integer
+          description: Updated number of visits allowed
+        durationInDays:
+          type: integer
+          description: Updated duration of the subscription in days
+        withCoach:
+          type: boolean
+          description: Updated coach inclusion status
+
+    ExceptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+    GymZone:
+      type: string
+      enum:
+        - GYM
+        - SWIMMING_POOL
+        - BOX

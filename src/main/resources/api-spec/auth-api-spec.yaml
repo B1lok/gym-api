@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Gym API
+  description: API for user authentication and registration in the gym management system
+  version: 1.0.0
+
+paths:
+  /sign-up:
+    post:
+      summary: Create new user
+      tags:
+        - Authentication
+      requestBody:
+        description: Data required to create a new user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreationDto'
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /sign-in:
+    post:
+      summary: Sign in user
+      tags:
+        - Authentication
+      requestBody:
+        description: Credentials for user login
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+        '404':
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+components:
+  schemas:
+    UserCreationDto:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 32
+          pattern: "^[a-zA-Z]+$"
+          description: First name of the user (Latin letters only)
+        lastName:
+          type: string
+          maxLength: 32
+          pattern: "^[a-zA-Z]+$"
+          description: Last name of the user (Latin letters only)
+        email:
+          type: string
+          format: email
+          description: Email of the user
+        password:
+          type: string
+          minLength: 8
+          maxLength: 32
+          description: Password for the user
+        phoneNumber:
+          type: string
+          pattern: "^\\+38\\(0[0-9]{2}\\)[0-9]{3}-[0-9]{2}-[0-9]{2}$"
+          description: Phone number of the user in the format +38(0XX)XXX-XX-XX
+
+    AuthRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User's email address
+        password:
+          type: string
+          description: User's password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT token for authenticated user
+        type:
+          type: string
+          description: Type of the token
+        algorithm:
+          type: string
+          description: Algorithm used to generate the token
+
+    ExceptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message describing the issue
