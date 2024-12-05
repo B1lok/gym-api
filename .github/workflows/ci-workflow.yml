@@ -2,7 +2,9 @@ name: CI workflow
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
@@ -14,7 +16,7 @@ jobs:
           POSTGRES_DB: gym
           POSTGRES_USERNAME: postgres
           POSTGRES_PASSWORD: postgres
-        ports: 
+        ports:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
@@ -22,4 +24,4 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - run:  mvn -B install --file pom.xml
+      - run: mvn -B install --file pom.xml
