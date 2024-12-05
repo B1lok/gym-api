@@ -2,7 +2,9 @@ name: CI workflow
 
 on:
   pull_request:
-    branches: [main]
+    branches: [ main ]
+  push:
+    branches: [ main ]
 
 jobs:
   build:
@@ -22,4 +24,4 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - run:  mvn -B install --file pom.xml
+      - run: mvn -B install --file pom.xml
