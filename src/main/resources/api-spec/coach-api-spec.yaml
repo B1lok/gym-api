@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Gym API
+  description: API for managing gym coaches and training records
+  version: 1.0.0
+paths:
+  /gym/coach/getAll:
+    get:
+      summary: Get all coaches
+      tags:
+        - Coaches
+      responses:
+        '200':
+          description: Successfully retrieved list of coaches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachInfoDto'
+
+  /gym/coach/getSelf:
+    get:
+      summary: Get current coach's professional information
+      tags:
+        - Coaches
+      responses:
+        '200':
+          description: Successfully retrieved coach information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachInfoUpdateDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/coach/records/getMyRecords:
+    get:
+      summary: Get all records for the current coach
+      tags:
+        - Records
+      responses:
+        '200':
+          description: Successfully retrieved records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingForCoachDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/coach/records/cancelById/{recordId}:
+    post:
+      summary: Cancel a record by ID
+      tags:
+        - Records
+      parameters:
+        - in: path
+          name: recordId
+          required: true
+          schema:
+            type: integer
+          description: ID of the record to cancel
+      responses:
+        '204':
+          description: Record successfully canceled
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+  /gym/coach/update:
+    patch:
+      summary: Update current coach's professional information
+      tags:
+        - Coaches
+      requestBody:
+        description: Updated coach information
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoachInfoUpdateDto'
+      responses:
+        '200':
+          description: Successfully updated coach information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoachInfoDto'
+        '403':
+          description: Access forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionResponse'
+
+components:
+  schemas:
+    CoachInfoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Coach ID
+        coachFirstName:
+          type: string
+          description: Coach's first name
+        coachLastName:
+          type: string
+          description: Coach's last name
+        coachEmail:
+          type: string
+          description: Coach's email
+        coachPhoneNumber:
+          type: string
+          description: Coach's phone number
+        education:
+          type: string
+          description: Coach's education details
+        experience:
+          type: string
+          description: Coach's experience details
+        specialization:
+          type: string
+          description: Coach's specialization in the gym
+
+    CoachInfoUpdateDto:
+      type: object
+      properties:
+        education:
+          type: string
+          description: Updated education details
+        experience:
+          type: string
+          description: Updated experience details
+        specialization:
+          type: string
+          description: Updated specialization
+
+    TrainingForCoachDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Training ID
+        userId:
+          type: integer
+          description: User ID associated with the training
+        userFirstName:
+          type: string
+          description: User's first name
+        userLastName:
+          type: string
+          description: User's last name
+        userEmail:
+          type: string
+          description: User's email
+        trainingType:
+          type: string
+          description: Type of the training
+        trainingDate:
+          type: string
+          format: date
+          description: Date of the training
+        trainingStart:
+          type: string
+          format: time
+          description: Start time of the training
+        trainingEnd:
+          type: string
+          format: time
+          description: End time of the training
+        trainingStatus:
+          type: string
+          description: Current status of the training
+
+    ExceptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+

@@ -1,0 +1,350 @@
+openapi: 3.0.0
+info:
+  title: Gym API
+  description: API for managing gym administrators
+  version: 1.0.0
+paths:
+  /gym/admin/getCustomers:
+    get:
+      summary: Get all customers
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully retrieved all customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+
+  /gym/admin/getAdmins:
+    get:
+      summary: Get all admins
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully retrieved all admins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDto'
+
+  /gym/admin/getCoaches:
+    get:
+      summary: Get all coaches
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully retrieved all coaches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CoachInfoDto'
+
+  /gym/admin/getStatistic:
+    get:
+      summary: Get statistics
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully retrieved statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatisticDto'
+
+  /gym/admin/getCoachRecords/{coachId}:
+    get:
+      summary: Get training records for a coach
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: coachId
+          required: true
+          schema:
+            type: integer
+          description: ID of the coach
+      responses:
+        '200':
+          description: Successfully retrieved training records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingForCoachDto'
+
+  /gym/admin/getCustomerSubscriptions/{customerId}:
+    get:
+      summary: Get customer subscriptions
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: integer
+          description: ID of the customer
+      responses:
+        '200':
+          description: Successfully retrieved subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserSubscriptionDto'
+
+  /gym/admin/getCustomerTrainings/{customerId}:
+    get:
+      summary: Get customer trainings
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: customerId
+          required: true
+          schema:
+            type: integer
+          description: ID of the customer
+      responses:
+        '200':
+          description: Successfully retrieved trainings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrainingDto'
+
+  /gym/admin/giveAdminRole/{userId}:
+    post:
+      summary: Grant admin role to a user
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: Admin role successfully granted
+
+  /gym/admin/takeAdminRole/{userId}:
+    post:
+      summary: Revoke admin role from a user
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: Admin role successfully revoked
+
+  /gym/admin/giveCoachRole/{userId}:
+    post:
+      summary: Grant coach role to a user
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      requestBody:
+        description: Details for creating a coach
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CoachInfoCreationDto'
+      responses:
+        '200':
+          description: Coach role successfully granted
+
+  /gym/admin/takeCoachRole/{coachId}/{coachToReplaceId}:
+    post:
+      summary: Revoke coach role and assign replacement
+      tags:
+        - Admin
+      parameters:
+        - in: path
+          name: coachId
+          required: true
+          schema:
+            type: integer
+          description: ID of the coach being revoked
+        - in: path
+          name: coachToReplaceId
+          required: true
+          schema:
+            type: integer
+          description: ID of the replacement coach
+      responses:
+        '200':
+          description: Coach role successfully revoked and reassigned
+
+components:
+  schemas:
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+
+    CoachInfoDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        coachFirstName:
+          type: string
+        coachLastName:
+          type: string
+        coachEmail:
+          type: string
+        coachPhoneNumber:
+          type: string
+        education:
+          type: string
+        experience:
+          type: string
+        specialization:
+          type: string
+
+    StatisticDto:
+      type: object
+      properties:
+        numberOfCustomers:
+          type: integer
+        numberOfCoaches:
+          type: integer
+        overallSubscriptionsSold:
+          type: integer
+        subscriptionSoldThisMonth:
+          type: integer
+        eachMonthStatistic:
+          type: object
+          additionalProperties:
+            type: integer
+
+    TrainingForCoachDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        userFirstName:
+          type: string
+        userLastName:
+          type: string
+        userEmail:
+          type: string
+        trainingType:
+          type: string
+        trainingDate:
+          type: string
+          format: date
+        trainingStart:
+          type: string
+          format: time
+        trainingEnd:
+          type: string
+          format: time
+        trainingStatus:
+          type: string
+
+    UserSubscriptionDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        subscriptionType:
+          type: string
+        subscriptionWithCoach:
+          type: boolean
+        trainingsLeft:
+          type: integer
+        coachId:
+          type: integer
+        coachFirstName:
+          type: string
+        coachLastName:
+          type: string
+        purchaseDate:
+          type: string
+          format: date
+        expirationDate:
+          type: string
+          format: date
+
+    TrainingDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        trainingType:
+          type: string
+        trainingDate:
+          type: string
+          format: date
+        trainingStart:
+          type: string
+          format: time
+        trainingEnd:
+          type: string
+          format: time
+        trainingStatus:
+          type: string
+        coachId:
+          type: integer
+        coachFirstName:
+          type: string
+        coachLastName:
+          type: string
+
+    ExceptionResponse:
+      type: object
+      properties:
+        message:
+          type: string
+
+    CoachInfoCreationDto:
+      type: object
+      properties:
+        education:
+          type: string
+        experience:
+          type: string
+        specialization:
+          type: string
